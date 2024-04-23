@@ -1,5 +1,10 @@
 package gofilter
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Comparable interface {
 	EqualString(string) bool
 }
@@ -67,4 +72,24 @@ func (f *OrFilter) Matches(obj Filterable) bool {
 		}
 	}
 	return false
+}
+
+func DebugFilterer(f Filterer) string {
+	if or, ok := f.(*OrFilter); ok {
+		clauses := make([]string, len(or.filters))
+		for i, filter := range or.filters {
+			clauses[i] = DebugFilterer(filter)
+		}
+		return "OR(" + strings.Join(clauses, ", ") + ")"
+	} else if and, ok := f.(*AndFilter); ok {
+		clauses := make([]string, len(and.filters))
+		for i, filter := range and.filters {
+			clauses[i] = DebugFilterer(filter)
+		}
+		return "AND(" + strings.Join(clauses, ", ") + ")"
+	} else if c, ok := f.(*EqualStringFilter); ok {
+		return fmt.Sprintf("%s=%s", c.field, c.value)
+	}
+
+	return "UNKNOWN"
 }

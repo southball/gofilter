@@ -1,6 +1,7 @@
 package gofilter_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/southball/gofilter"
@@ -38,11 +39,15 @@ func TestParseAndFilter(t *testing.T) {
 
 	filtered := gofilter.Filter(filter, objects)
 
+	fmt.Println(gofilter.DebugFilterer(filter))
+
 	if len(filtered) != 1 {
 		t.Errorf("Expected 1 object, got %d", len(filtered))
+		return
 	}
 
 	if filtered[0].name != "foo" {
 		t.Errorf("Expected object to have name 'foo', got '%s'", filtered[0].name)
+		return
 	}
 }

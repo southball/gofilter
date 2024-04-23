@@ -13,8 +13,20 @@ type Object struct {
 	value String
 }
 
+type Uncomparable struct{}
+
+func (*Uncomparable) EqualString(_ string) bool {
+	return false
+}
+
 func (o *Object) GetField(field string) gofilter.Comparable {
-	return o.name
+	if field == "name" {
+		return o.name
+	} else if field == "value" {
+		return o.value
+	} else {
+		return &Uncomparable{}
+	}
 }
 
 func (s String) EqualString(other string) bool {
